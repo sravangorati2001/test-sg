@@ -1,7 +1,4 @@
-sagemaker
+joblib
 pandas
-numpy
-ipython
 scikit-learn
-black
-pylint
+boto3
