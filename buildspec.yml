@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - python train.py
+      - python app.py
+
+artifacts:
+  files:
+    - lambda_function.py
+    - model.joblib
+    - label_encoder.joblib
+    - appspec.yml
