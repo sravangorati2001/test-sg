@@ -127,5 +127,5 @@ if __name__ == "__main__":
     #model_data = train_model(session_details, train_input)
     test_data = gen_test_data()
     #serve_model(model_data, test_data)
-    model_data = {"model_path": "s3://sagemaker-us-east-1-316381839854/sagemaker-scikit-learn-2023-01-08-18-35-09-467/output/model.tar.gz"}
+    model_data = {"model_path": "s3://sagemaker-us-west-1-992382664147/sagemaker-scikit-learn-2024-05-19-20-27-52-919/sourcedir.tar.gz"}
     serve_saved_model(model_data, test_data)
