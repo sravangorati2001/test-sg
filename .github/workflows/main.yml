@@ -36,4 +36,4 @@ jobs:
 
     - name: Deploy model
       run: |
-        python deploy.py
+        python app.py
