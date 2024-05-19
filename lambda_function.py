@@ -18,6 +18,7 @@ def lambda_handler(event, context):
     model = joblib.load(model_path)
     label_encoder = joblib.load(encoder_path)
     
+    
 
     # Parse input data
     input_data = json.loads(event['body'])['data']
