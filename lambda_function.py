@@ -1,36 +1,37 @@
-import json
-import joblib
 import boto3
+import zipfile
 import os
 
+# Set your AWS parameters
+s3_bucket = 'traindata-pyxer1'  # Replace with your S3 bucket name
+s3_key_appspec = 'appspec.yml'
+s3_key_lambda = 'lambda_deployment.zip'
+lambda_function_name = 'pyxer'  # Replace with your Lambda function name
+
+# Upload appspec.yml to S3
 s3 = boto3.client('s3')
-s3_bucket = 'traindata-pyxer1'
-s3_key_model = 'model/model.joblib'
-s3_key_encoder = 'model/label_encoder.joblib'
-model_path = '/tmp/model.joblib'
-encoder_path = '/tmp/label_encoder.joblib'
+s3.upload_file('appspec.yml', s3_bucket, s3_key_appspec)
+print(f"Uploaded AppSpec file to s3://{s3_bucket}/{s3_key_appspec}")
 
-def lambda_handler(event, context):
-    # Download model and label encoder from S3
-    s3.download_file(s3_bucket, s3_key_model, model_path)
-    s3.download_file(s3_bucket, s3_key_encoder, encoder_path)
-    
-    model = joblib.load(model_path)
-    label_encoder = joblib.load(encoder_path)
-    
-    # Parse input data
-    input_data = json.loads(event['body'])['data']
+# Create a zip file containing the Lambda function code and model artifacts
+with zipfile.ZipFile('/tmp/lambda_deployment.zip', 'w') as zipf:
+    zipf.write('lambda_function.py')
+    zipf.write('model/model.joblib')
+    zipf.write('model/label_encoder.joblib')
+    zipf.write('appspec.yml')
+    for root, dirs, files in os.walk('package'):
+        for file in files:
+            zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), 'package'))
 
-    # Predict
-    prediction = model.predict([input_data])
-    prediction_label = label_encoder.inverse_transform(prediction)
-    
-    return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'prediction': prediction_label.tolist()
-        }),
-        'headers': {
-            'Content-Type': 'application/json'
-        }
-    }
+# Upload Lambda function code to S3
+s3.upload_file('/tmp/lambda_deployment.zip', s3_bucket, s3_key_lambda)
+print(f"Uploaded Lambda deployment package to s3://{s3_bucket}/{s3_key_lambda}")
+
+# Update Lambda function
+lambda_client = boto3.client('lambda')
+with open('/tmp/lambda_deployment.zip', 'rb') as f:
+    lambda_client.update_function_code(
+        FunctionName=lambda_function_name,
+        ZipFile=f.read()
+    )
+print(f"Updated Lambda function: {lambda_function_name}")

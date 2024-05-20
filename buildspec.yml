@@ -15,6 +15,8 @@ phases:
       - cp model.joblib model/model.joblib  # Ensure correct path
       - cp label_encoder.joblib model/label_encoder.joblib  # Ensure correct path
       - zip -r lambda_function.zip lambda_function.py model/model.joblib model/label_encoder.joblib  # Ensure correct paths
+      - cd package
+      - zip -r ../lambda_function.zip .  # Add dependencies to the zip
 
 artifacts:
   files:
