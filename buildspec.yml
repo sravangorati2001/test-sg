@@ -5,22 +5,25 @@ phases:
     runtime-versions:
       python: 3.8
     commands:
-      - pip install -r requirements.txt -t ./python
-
+      - echo Installing dependencies...
+      - pip install -r requirements.txt -t .
   build:
     commands:
-      - export PYTHONPATH=$PYTHONPATH:$(pwd)/python
+      - echo Build started on `date`
+      - echo Training the model...
       - python train.py
-      - mkdir -p model
-      - cp model.joblib model/model.joblib  # Ensure correct path
-      - cp label_encoder.joblib model/label_encoder.joblib  # Ensure correct path
-      - mkdir -p deployment_package
-      - cp -r ./python/* ./deployment_package/
-      - cp lambda_function.py appspec.yml model/model.joblib model/label_encoder.joblib ./deployment_package/
-      - cd deployment_package
-      - zip -r ../lambda_function.zip .
-      - cd ..
-
+      - echo Model training completed on `date`
+  post_build:
+    commands:
+      - echo Zipping artifacts...
+      - cp model.pkl /tmp/model.pkl
+      - zip -r function.zip .
+      - echo Uploading to S3...
+      - aws s3 cp function.zip s3://my-lambda-artifacts/function.zip
+      - echo Creating deployment...
+      - aws deploy create-deployment --application-name my-lambda-application --deployment-config-name CodeDeployLambdaCanary10Percent5Minutes --deployment-group-name my-lambda-deployment-group --s3-location bucket=my-lambda-artifacts,bundleType=zip,key=function.zip
 artifacts:
   files:
-    - lambda_function.zip
+    - function.zip
+  discard-paths: yes
+  base-directory: .

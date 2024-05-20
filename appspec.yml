@@ -4,6 +4,11 @@ Resources:
       Type: AWS::Lambda::Function
       Properties:
         Name: pyxer
-        Alias: live
-        CurrentVersion: "1"
-        TargetVersion: "2"
+        Alias:
+          Name: live
+          Description: "Live alias"
+          RoutingConfig:
+            AdditionalVersionWeights: {}
+Hooks:
+  - BeforeAllowTraffic: "CodeDeployHook_lambdaFunctionPreTraffic"
+  - AfterAllowTraffic: "CodeDeployHook_lambdaFunctionPostTraffic"

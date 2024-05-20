@@ -1,4 +1,2 @@
-joblib
 pandas
 scikit-learn
-boto3
