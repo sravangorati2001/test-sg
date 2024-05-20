@@ -16,8 +16,7 @@ phases:
   post_build:
     commands:
       - echo Zipping artifacts...
-      - cp model.pkl /tmp/model.pkl
-      - zip -r function.zip lambda_function.py model.pkl
+      - zip -r function.zip lambda_function.py model.pkl appspec.yml scripts/
       - echo Uploading to S3...
       - aws s3 cp function.zip s3://traindata-pyxer1/function.zip
       - echo Updating Lambda function code...

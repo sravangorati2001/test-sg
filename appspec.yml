@@ -7,8 +7,16 @@ Resources:
         Alias:
           Name: live
           Description: "Live alias"
+          CurrentVersion: "1"
+          TargetVersion: "2"
           RoutingConfig:
             AdditionalVersionWeights: {}
-Hooks:
-  - BeforeAllowTraffic: "CodeDeployHook_lambdaFunctionPreTraffic"
-  - AfterAllowTraffic: "CodeDeployHook_lambdaFunctionPostTraffic"
+hooks:
+  BeforeAllowTraffic:
+    - location: scripts/BeforeAllowTraffic.sh
+      timeout: 300
+      runas: root
+  AfterAllowTraffic:
+    - location: scripts/AfterAllowTraffic.sh
+      timeout: 300
+      runas: root
