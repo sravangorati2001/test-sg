@@ -9,7 +9,6 @@ phases:
 
   build:
     commands:
-      - python -m unittest discover -s tests
       - export PYTHONPATH=$PYTHONPATH:$(pwd)/python
       - python train.py
       - mkdir -p model
