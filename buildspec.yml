@@ -19,9 +19,9 @@ phases:
       - cp model.pkl /tmp/model.pkl
       - zip -r function.zip .
       - echo Uploading to S3...
-      - aws s3 cp function.zip s3://my-lambda-artifacts/function.zip
+      - aws s3 cp function.zip s3://traindata-pyxer1/function.zip
       - echo Creating deployment...
-      - aws deploy create-deployment --application-name my-lambda-application --deployment-config-name CodeDeployLambdaCanary10Percent5Minutes --deployment-group-name my-lambda-deployment-group --s3-location bucket=my-lambda-artifacts,bundleType=zip,key=function.zip
+      - aws deploy create-deployment --application-name pyxer --deployment-config-name CodeDeployLambdaCanary10Percent5Minutes --deployment-group-name deployins3 --s3-location bucket=traindata-pyxer1,bundleType=zip,key=function.zip
 artifacts:
   files:
     - function.zip
