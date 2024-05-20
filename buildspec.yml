@@ -18,9 +18,9 @@ phases:
       - echo Zipping artifacts...
       - zip -r function.zip lambda_function.py model.pkl appspec.yml scripts/
       - echo Uploading to S3...
-      - aws s3 cp function.zip s3://traindata-pyxer1/function/
+      - aws s3 cp function.zip s3://traindata-pyxer1/
       - echo Updating Lambda function code...
-      - aws lambda update-function-code --function-name pyxer --s3-bucket traindata-pyxer1 --s3-key function/function.zip
+      - aws lambda update-function-code --function-name pyxer --s3-bucket traindata-pyxer1 --s3-key function.zip
 
 artifacts:
   files:
