@@ -6,7 +6,7 @@ phases:
       python: 3.8
     commands:
       - echo Installing dependencies...
-      - pip install -r requirements.txt -t .
+      - pip install -r requirements.txt -t ./package
   build:
     commands:
       - echo Build started on `date`
@@ -15,7 +15,8 @@ phases:
       - echo Model training completed on `date`
   post_build:
     commands:
-      - echo Zipping artifacts...
+      - echo Creating deployment package...
+      - cp -r package/* .
       - zip -r function.zip lambda_function.py model.pkl appspec.yml scripts/ .
       - echo Uploading to S3...
       - aws s3 cp function.zip s3://traindata-pyxer1/
