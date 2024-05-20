@@ -1,7 +1,6 @@
 import json
 import pickle
 import boto3
-import pandas as pd
 
 def lambda_handler(event, context):
     # Download the model from S3 to /tmp/model.pkl
@@ -15,7 +14,7 @@ def lambda_handler(event, context):
         model = pickle.load(f)
     
     # Process the input data (assuming it's passed in the event)
-    input_data = pd.DataFrame(event['data'])
+    input_data = event['data']
     
     # Make predictions
     predictions = model.predict(input_data)

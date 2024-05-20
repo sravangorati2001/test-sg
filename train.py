@@ -1,16 +1,18 @@
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 import pickle
 
-# Load the training data
-data = pd.read_csv('data/iris.csv')
-
-# Separate features and target
-X = data[['feature1', 'feature2']]
-y = data['target']
+# Training data
+X = [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6]
+]
+y = [0, 1, 0, 1, 0]
 
 # Train the model
-model = LogisticRegression()
+model = DecisionTreeClassifier()
 model.fit(X, y)
 
 # Save the model to a file
