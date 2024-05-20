@@ -5,18 +5,20 @@ phases:
     runtime-versions:
       python: 3.8
     commands:
-      - pip install -r requirements.txt -t ./package
+      - pip install -r requirements.txt -t ./python
 
   build:
     commands:
-      - cp -r ./package/* .
       - python train.py
       - mkdir -p model
       - cp model.joblib model/model.joblib  # Ensure correct path
       - cp label_encoder.joblib model/label_encoder.joblib  # Ensure correct path
-      - zip -r lambda_function.zip lambda_function.py model/model.joblib model/label_encoder.joblib appspec.yml  # Ensure correct paths
-      - cd package
-      - zip -r ../lambda_function.zip .  # Add dependencies to the zip
+      - mkdir -p deployment_package
+      - cp -r ./python/* ./deployment_package/
+      - cp lambda_function.py appspec.yml model/model.joblib model/label_encoder.joblib ./deployment_package/
+      - cd deployment_package
+      - zip -r ../lambda_function.zip .
+      - cd ..
 
 artifacts:
   files:
