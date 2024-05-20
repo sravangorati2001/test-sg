@@ -1,11 +1,20 @@
 import boto3
 import zipfile
 import os
+import subprocess
+import shutil
 
 # Set your AWS parameters
 s3_bucket = 'traindata-pyxer1'  # Replace with your S3 bucket name
 s3_key_lambda = 'lambda_deployment.zip'
 lambda_function_name = 'pyxer'  # Replace with your Lambda function name
+
+# Create a virtual environment
+venv_dir = '/tmp/venv'
+subprocess.check_call(['python3', '-m', 'venv', venv_dir])
+
+# Install dependencies in the virtual environment
+subprocess.check_call([f'{venv_dir}/bin/pip', 'install', '-r', 'requirements.txt', '-t', './python'])
 
 # Create a zip file containing the Lambda function code, model artifacts, and dependencies
 with zipfile.ZipFile('/tmp/lambda_deployment.zip', 'w') as zipf:
@@ -30,3 +39,7 @@ with open('/tmp/lambda_deployment.zip', 'rb') as f:
         ZipFile=f.read()
     )
 print(f"Updated Lambda function: {lambda_function_name}")
+
+# Cleanup
+shutil.rmtree('python')
+shutil.rmtree(venv_dir)
