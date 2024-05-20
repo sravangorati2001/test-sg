@@ -16,8 +16,8 @@ print(f"Uploaded AppSpec file to s3://{s3_bucket}/{s3_key_appspec}")
 # Create a zip file containing the Lambda function code and model artifacts
 with zipfile.ZipFile('/tmp/lambda_deployment.zip', 'w') as zipf:
     zipf.write('lambda_function.py')
-    zipf.write('model.joblib')
-    zipf.write('label_encoder.joblib')
+    zipf.write('model.joblib', 'model/model.joblib')  # Ensure correct path in the zip
+    zipf.write('label_encoder.joblib', 'model/label_encoder.joblib')  # Ensure correct path in the zip
     zipf.write('appspec.yml')
 
 # Upload Lambda function code to S3

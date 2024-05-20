@@ -34,6 +34,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-1
 
-    - name: Deploy model
+    - name: Package and deploy Lambda function
       run: |
         python app.py
