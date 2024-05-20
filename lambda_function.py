@@ -13,15 +13,15 @@ s3 = boto3.client('s3')
 s3.upload_file('appspec.yml', s3_bucket, s3_key_appspec)
 print(f"Uploaded AppSpec file to s3://{s3_bucket}/{s3_key_appspec}")
 
-# Create a zip file containing the Lambda function code and model artifacts
+# Create a zip file containing the Lambda function code, model artifacts, and dependencies
 with zipfile.ZipFile('/tmp/lambda_deployment.zip', 'w') as zipf:
     zipf.write('lambda_function.py')
-    zipf.write('model/model.joblib')
-    zipf.write('model/label_encoder.joblib')
     zipf.write('appspec.yml')
-    for root, dirs, files in os.walk('package'):
+    zipf.write('model/model.joblib', 'model/model.joblib')
+    zipf.write('label_encoder.joblib', 'model/label_encoder.joblib')
+    for root, dirs, files in os.walk('python'):
         for file in files:
-            zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), 'package'))
+            zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), 'python'))
 
 # Upload Lambda function code to S3
 s3.upload_file('/tmp/lambda_deployment.zip', s3_bucket, s3_key_lambda)
