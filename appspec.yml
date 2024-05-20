@@ -6,3 +6,4 @@ Resources:
         Name: pyxer
         Alias: live
         CurrentVersion: "1"
+        TargetVersion: "2" 
