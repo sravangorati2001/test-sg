@@ -1,0 +1,6 @@
+[submodule "model_b"]
+	path = model_b
+	url = https://github.com/sravangorati2001/model-b.git
+[submodule "model-a"]
+	path = model-a
+	url = https://github.com/sravangorati2001/model-a.git
