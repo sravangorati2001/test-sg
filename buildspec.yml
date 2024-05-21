@@ -4,26 +4,25 @@ phases:
   install:
     runtime-versions:
       python: 3.8
+  pre_build:
     commands:
-      - echo "Installing dependencies..."
+      - echo "Starting pre-build phase"
+      - echo "Updating submodules"
+      - git config --global credential.helper 'cache --timeout=3600'
+      - echo "machine github.com login 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 password x-oauth-basic" > ~/.netrc
+      - git submodule update --init --recursive
+      - echo "Installing project dependencies"
       - pip install -r requirements.txt -t .
   build:
     commands:
-      - echo "Build started on `date`"
+      - echo "Build started on $(date)"
       - echo "Training the model..."
       - python train.py
-      - echo "Model training completed on `date`"
+      - echo "Model training completed on $(date)"
   post_build:
     commands:
-      - echo "Cleaning up unnecessary files..."
-      - find . -type d -name "tests" -exec rm -rf {} +
-      - find . -type d -name "__pycache__" -exec rm -rf {} +
-      - find . -name "*.pyc" -delete
-      - find . -name "*.pyo" -delete
-      - find . -name "*.dist-info" -exec rm -rf {} +
-      - find . -name "*.egg-info" -exec rm -rf {} +
       - echo "Creating deployment package..."
-      - zip -r function.zip lambda_function.py appspec.yml scripts/ .
+      - zip -r function.zip lambda_function.py appspec.yml scripts/ model-a/ model_b/ .
       - echo "Uploading deployment package to S3..."
       - aws s3 cp function.zip s3://traindata-pyxer1/
       - echo "Uploading model to S3..."
