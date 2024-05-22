@@ -31,6 +31,6 @@ phases:
       - aws lambda update-function-code --function-name pyxer --s3-bucket traindata-pyxer1 --s3-key function.zip
 artifacts:
   files:
-    - deployment.zip
+    - function.zip
   discard-paths: yes
   base-directory: .
