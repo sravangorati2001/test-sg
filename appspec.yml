@@ -1,22 +1,14 @@
 version: 0.0
-Resources:
-  - myLambdaFunction:
-      Type: AWS::Lambda::Function
-      Properties:
-        Name: pyxer
-        Alias:
-          Name: live
-          Description: "Live alias"
-          CurrentVersion: "1"
-          TargetVersion: "2"
-          RoutingConfig:
-            AdditionalVersionWeights: {}
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/your-app
 hooks:
-  BeforeAllowTraffic:
-    - location: scripts/BeforeAllowTraffic.sh
+  AfterInstall:
+    - location: scripts/deploy.sh
       timeout: 300
-      runas: root
-  AfterAllowTraffic:
-    - location: scripts/AfterAllowTraffic.sh
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/start.sh
       timeout: 300
-      runas: root
+      runas: ec2-user

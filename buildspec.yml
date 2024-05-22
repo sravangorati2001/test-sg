@@ -12,7 +12,7 @@ phases:
       - echo "machine github.com login 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 password x-oauth-basic" > ~/.netrc
       - git submodule update --init --recursive
       - echo "Installing project dependencies"
-      - pip install -r requirements.txt -t .
+      - pip install -r requirements.txt
   build:
     commands:
       - echo "Build started on $(date)"
@@ -22,16 +22,15 @@ phases:
   post_build:
     commands:
       - echo "Creating deployment package..."
-      - zip -r function.zip lambda_function.py appspec.yml scripts/ model-a/ model_b/ .
+      - mkdir -p deployment
+      - cp -r * deployment/
+      - cd deployment
+      - zip -r ../deployment.zip .
+      - cd ..
       - echo "Uploading deployment package to S3..."
-      - aws s3 cp function.zip s3://traindata-pyxer1/
-      - echo "Uploading model to S3..."
-      - aws s3 cp model.pkl s3://traindata-pyxer1/model.pkl
-      - echo "Updating Lambda function code..."
-      - aws lambda update-function-code --function-name pyxer --s3-bucket traindata-pyxer1 --s3-key function.zip
-
+      - aws s3 cp deployment.zip s3://traindata-pyxer1/
 artifacts:
   files:
-    - function.zip
+    - deployment.zip
   discard-paths: yes
   base-directory: .
