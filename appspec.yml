@@ -4,11 +4,19 @@ files:
   - source: /
     destination: /var/www/html/your-app
 hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 300
+      runas: ec2-user
   AfterInstall:
     - location: scripts/deploy.sh
       timeout: 300
       runas: ec2-user
   ApplicationStart:
     - location: scripts/start.sh
+      timeout: 300
+      runas: ec2-user
+  ValidateService:
+    - location: scripts/validate_service.sh
       timeout: 300
       runas: ec2-user

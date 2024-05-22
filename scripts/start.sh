@@ -1,5 +1,10 @@
 #!/bin/bash
-# Install dependencies
+
+# Move to the application directory
 cd /var/www/html/your-app
+
+# Activate the virtual environment
 source venv/bin/activate
-pip install -r requirements.txt
+
+# Start the application (example with Flask)
+nohup python app.py > app.log 2>&1 &
