@@ -22,13 +22,13 @@ phases:
   post_build:
     commands:
       - echo "Creating deployment package..."
-      - mkdir -p deployment
-      - cp -r * deployment/
-      - cd deployment
-      - zip -r ../deployment.zip .
-      - cd ..
+      - zip -r function.zip lambda_function.py appspec.yml scripts/ model-a/ model_b/ .
       - echo "Uploading deployment package to S3..."
-      - aws s3 cp deployment.zip s3://traindata-pyxer1/
+      - aws s3 cp function.zip s3://traindata-pyxer1/
+      - echo "Uploading model to S3..."
+      - aws s3 cp model.pkl s3://traindata-pyxer1/model.pkl
+      - echo "Updating Lambda function code..."
+      - aws lambda update-function-code --function-name pyxer --s3-bucket traindata-pyxer1 --s3-key function.zip
 artifacts:
   files:
     - deployment.zip
