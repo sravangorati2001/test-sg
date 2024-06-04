@@ -31,7 +31,6 @@ steps:
 - script: |
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
   displayName: 'Install Azure CLI'
-  condition: eq(variables['Agent.OS'], 'Linux')  # Only install on Linux agents
   
 - script: |
     echo "Creating deployment package..."
