@@ -3,11 +3,19 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
 trigger:
 - main
 
 pool:
   name: 'my-personal-computer'  
+
+variables:
+  sshPrivateKey: $(your_ssh_private_key_variable_name)
 
 steps:
 - checkout: self
@@ -28,26 +36,26 @@ steps:
     echo "Model training completed."
   displayName: 'Train Model'
 
-- script: |
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-  displayName: 'Install Azure CLI'
-  
-- script: |
-    echo "Creating deployment package..."
-    zip -r function.zip lambda_function.py appspec.yml scripts/ model-a/ model_b/ .
-    echo "Uploading deployment package to Azure Blob Storage..."
-    az storage blob upload --container-name pyxer --file function.zip --name function.zip
-  displayName: 'Create and Upload Deployment Package'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
 
-- script: |
-    echo "Uploading model to Azure Blob Storage..."
-    az storage blob upload --container-name pyxer --file model.pkl --name model.pkl
-  displayName: 'Upload Model'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/src'
+    ArtifactName: 'app'
 
-- script: |
-    echo "Copying deployment files to Azure VM..."
-    scp -i $(sshPrivateKey) function.zip model.pkl sravankumar.gorati@sjsu.edu@10.184.85.13:C:/Deployment/
-  displayName: 'Copy Deployment Files'
+- task: SSH@0  # Use SSH to connect to the production VM
+  inputs:
+    sshEndpoint: 'pyxer-service'  # Azure DevOps service connection for SSH
+    runOptions: 'inline'
+    inline: |
+      cd /var/www/html  # Navigate to the directory where the application will be deployed
+      sudo rm -rf *     # Remove existing files (optional, depending on deployment strategy)
+      sudo tar zxvf $(System.DefaultWorkingDirectory)/_temp/app.tar.gz  # Extract the uploaded artifact
+
 
 
 
