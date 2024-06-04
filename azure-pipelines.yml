@@ -12,10 +12,10 @@ trigger:
 - main
 
 pool:
-  name: 'my-personal-computer'  
+  name: 'my-personal-computer'
 
 variables:
-  sshPrivateKey: $(your_ssh_private_key_variable_name)
+  sshPrivateKeyPath: '$(Agent.TempDirectory)/pyxer_key.pem'
 
 steps:
 - checkout: self
@@ -47,14 +47,21 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/src'
     ArtifactName: 'app'
 
-- task: SSH@0  # Use SSH to connect to the production VM
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'pyxer_key.pem'
+  displayName: 'Download SSH Key'
+
+- task: SSH@0
   inputs:
     sshEndpoint: 'pyxer-service'  # Azure DevOps service connection for SSH
     runOptions: 'inline'
     inline: |
-      cd /var/www/html  # Navigate to the directory where the application will be deployed
-      sudo rm -rf *     # Remove existing files (optional, depending on deployment strategy)
-      sudo tar zxvf $(System.DefaultWorkingDirectory)/_temp/app.tar.gz  # Extract the uploaded artifact
+      echo "Copying codebase to Azure VM..."
+      scp -o StrictHostKeyChecking=no -i $(sshPrivateKeyPath) -r $(Build.ArtifactStagingDirectory)/src/* azureuser@20.64.243.169:/var/www/html
+      echo "Files copied successfully."
+  displayName: 'Copy Codebase to Azure VM'
+
 
 
 
