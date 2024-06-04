@@ -52,14 +52,11 @@ steps:
     secureFile: 'pyxer_key.pem'
   displayName: 'Download SSH Key'
 
-- task: SSH@0
-  inputs:
-    sshEndpoint: 'pyxer-service'  # Azure DevOps service connection for SSH
-    runOptions: 'inline'
-    inline: |
-      echo "Copying codebase to Azure VM..."
-      scp -o StrictHostKeyChecking=no -i $(sshPrivateKeyPath) -r $(Build.ArtifactStagingDirectory)/src/* azureuser@20.64.243.169:/var/www/html
-      echo "Files copied successfully."
+- script: |
+    echo "Copying codebase to Azure VM..."
+    chmod 600 $(sshPrivateKeyPath)
+    scp -o StrictHostKeyChecking=no -i $(sshPrivateKeyPath) -r $(Build.SourcesDirectory)/src/* azureuser@20.64.243.169:/var/www/html
+    echo "Files copied successfully."
   displayName: 'Copy Codebase to Azure VM'
 
 
