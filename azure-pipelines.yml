@@ -7,12 +7,14 @@ trigger:
 - main
 
 pool:
-  name: my-personal-computer  # Specify the name of the self-hosted agent pool
+  vmImage: 'ubuntu-latest'
 
 steps:
+- checkout: self
+
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.x'  # Use Python 3.x
+    versionSpec: '3.x'
   displayName: 'Use Python 3.x'
 
 - script: |
@@ -21,8 +23,21 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'Run pytest'
+    echo "Starting model training..."
+    python train.py
+    echo "Model training completed."
+  displayName: 'Train Model'
 
-  
+- script: |
+    echo "Creating deployment package..."
+    zip -r function.zip lambda_function.py appspec.yml scripts/ model-a/ model_b/ .
+    echo "Uploading deployment package to Azure Blob Storage..."
+    az storage blob upload --container-name pyxer --file function.zip --name function.zip
+  displayName: 'Create and Upload Deployment Package'
+
+- script: |
+    echo "Uploading model to Azure Blob Storage..."
+    az storage blob upload --container-name pyxer --file model.pkl --name model.pkl
+  displayName: 'Upload Model'
+
+
