@@ -55,7 +55,7 @@ steps:
 - script: |
     echo "Creating directory on the Azure VM..."
     chmod 600 $(sshPrivateKeyPath)
-    ssh -o StrictHostKeyChecking=no -i $(sshPrivateKeyPath) azureuser@20.64.243.169 "mkdir -p /var/www/html"
+    ssh -o StrictHostKeyChecking=no -i $(sshPrivateKeyPath) azureuser@20.64.243.169 "sudo mkdir -p /var/www/html"
   displayName: 'Create Directory on Azure VM'
 
 - script: |
