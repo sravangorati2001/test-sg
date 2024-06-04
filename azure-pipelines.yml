@@ -6,6 +6,9 @@
 trigger:
 - main
 
+pool:
+  name: my-personal-computer  # Specify the name of the self-hosted agent pool
+
 steps:
 - task: UsePythonVersion@0
   inputs:
