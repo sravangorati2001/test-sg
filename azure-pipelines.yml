@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'my-personal-computer'  
 
 steps:
 - checkout: self
@@ -39,5 +39,12 @@ steps:
     echo "Uploading model to Azure Blob Storage..."
     az storage blob upload --container-name pyxer --file model.pkl --name model.pkl
   displayName: 'Upload Model'
+
+- script: |
+    echo "Copying deployment files to Azure VM..."
+    scp -i $(sshPrivateKey) function.zip model.pkl sravankumar.gorati@sjsu.edu@10.184.85.13:C:/Deployment/
+  displayName: 'Copy Deployment Files'
+
+
 
 
