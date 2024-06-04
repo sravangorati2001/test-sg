@@ -38,9 +38,10 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/'
+    SourceFolder: '$(Build.SourcesDirectory)'  
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
+
 
 - task: PublishBuildArtifacts@1
   inputs:
